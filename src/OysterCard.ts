@@ -38,19 +38,20 @@ export default class {
 
     SwipeOut(station: Station, mode: Transport) {
         if(mode.type === T.BUS) {
+            console.log(`${station.name} via BUS`);
             return;//exit it Transport is BUS
         }
 
         this.journey[1] = station;
         // calculate tube fare after getting Zones Passed through
-        this.calculateTubeFare(this.setZonesTravelled(), this.journey);
-        //this.chargedFare =
+        this.chargedFare = this.calculateTubeFare(this.setZonesTravelled(), this.journey);
 
         //set wallet balance
         this.Wallet = (this.Wallet + fares.MAX_FARE) - this.chargedFare;
     }
 
     setZonesTravelled(): number {
+        console.log(`${this.journey[0].name} to ${this.journey[1].name}`);
         return this.getZonesTravelledCount(this.journey[0].zone, this.journey[1].zone);
     }
     getZonesTravelledCount(from: number[], to: number[]): number {
@@ -64,6 +65,25 @@ export default class {
     }
 
     calculateTubeFare(zonesTravelled: number, journey: Station[]): number {
+        const from = journey[0].zone, to = journey[1].zone;
+
+        if (zonesTravelled === 2 && !from.includes(1) && to.includes(1)) {
+            return fares.ANYWHERE_IN_ZONE1;
+        }
+        if (zonesTravelled === 2 && from.includes(1) && !to.includes(1)) {
+            return fares.ONE_ZONE_OUTSIDE_ZONE1;
+        }
+        if (zonesTravelled === 2 && from.includes(1) && to.includes(1)) {
+            return fares.TWO_ZONE_INCLUDING_ZONE1;
+        }
+        if (zonesTravelled === 2 && !from.includes(1) && !to.includes(1)) {
+            return fares.TWO_ZONE_EXCLUDING_ZONE1;
+        }
+        if (zonesTravelled === 3) {
+            return fares.THREE_ZONES;
+        }
+
+        //default to
         return fares.MAX_FARE;
     }
 
