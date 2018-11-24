@@ -44,10 +44,23 @@ export default class {
         this.journey[1] = station;
         // calculate tube fare after getting Zones Passed through
         //this.chargedFare = 
-        //console.log("finalFare", this.chargedFare);
+        console.log("zone: ", `${this.journey[0].name} to ${this.journey[1].name}`);
+        console.log("zone travelled", this.getZonesTravelledCount(this.journey[0].zone, this.journey[1].zone));
+
 
         //set wallet balance
         this.Wallet = (this.Wallet + 3.20) - this.chargedFare;
+    }
+
+    getZonesTravelledCount(from: number[], to: number[]): number {
+        let count;
+        from.forEach(function(fromZone){
+            to.forEach(function(toZone){
+                var zonesVisited = Math.abs(fromZone - toZone) + 1;
+                count = zonesVisited;
+            });
+        });
+        return count;
     }
 
 }
