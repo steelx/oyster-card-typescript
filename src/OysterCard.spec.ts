@@ -30,7 +30,7 @@ describe('OysterCard class', () => {
         expect(trip.Wallet).toEqual(28.2);
     });
 
-    it('should count ZONES Travelled on SwipeOut', () => {
+    it('should call ZONES Travelled on SwipeOut', () => {
         const trip = new OysterCard(30);
         spyOn(trip, 'getZonesTravelledCount');
 
@@ -42,5 +42,14 @@ describe('OysterCard class', () => {
         trip.SwipeIn(STATIONS.HOLBORN, TUBE);
         trip.SwipeOut(STATIONS.WIMBLEDON, TUBE);
         expect(trip.getZonesTravelledCount).toHaveBeenCalledWith(STATIONS.HOLBORN.zone, STATIONS.WIMBLEDON.zone);
+    });
+
+    it('should calculate Zones Traveled count', () => {
+        const trip = new OysterCard(30);
+        let count = trip.getZonesTravelledCount(STATIONS.HAMMERSMITH.zone, STATIONS.HOLBORN.zone);
+        expect(count).toEqual(2);
+
+        count = trip.getZonesTravelledCount(STATIONS.HOLBORN.zone, STATIONS.WIMBLEDON.zone);
+        expect(count).toEqual(3);
     });
 });
