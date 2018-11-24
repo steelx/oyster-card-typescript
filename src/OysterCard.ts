@@ -1,4 +1,4 @@
-import { Station, T } from "./constants";
+import { Station, T, fares } from "./constants";
 import Transport from "./Transport"
 
 const range = (start: number, end: number) => {
@@ -25,7 +25,7 @@ export default class {
     }
 
     SwipeIn(station: Station, mode: Transport) {
-        this.chargedFare = mode.type === T.BUS ? 1.80: 3.20;
+        this.chargedFare = mode.type === T.BUS ? fares.ANY_BUS_TRIP: fares.MAX_FARE;
         if (this.Wallet < this.chargedFare) {
             return "Wallet doesn't meet minimum balance";
         }
@@ -43,24 +43,28 @@ export default class {
 
         this.journey[1] = station;
         // calculate tube fare after getting Zones Passed through
-        //this.chargedFare = 
-        console.log("zone: ", `${this.journey[0].name} to ${this.journey[1].name}`);
-        console.log("zone travelled", this.getZonesTravelledCount(this.journey[0].zone, this.journey[1].zone));
-
+        this.calculateTubeFare(this.setZonesTravelled(), this.journey);
+        //this.chargedFare =
 
         //set wallet balance
-        this.Wallet = (this.Wallet + 3.20) - this.chargedFare;
+        this.Wallet = (this.Wallet + fares.MAX_FARE) - this.chargedFare;
     }
 
+    setZonesTravelled(): number {
+        return this.getZonesTravelledCount(this.journey[0].zone, this.journey[1].zone);
+    }
     getZonesTravelledCount(from: number[], to: number[]): number {
         let count;
         from.forEach(function(fromZone){
             to.forEach(function(toZone){
-                var zonesVisited = Math.abs(fromZone - toZone) + 1;
-                count = zonesVisited;
+                count = Math.abs(fromZone - toZone) + 1;
             });
         });
         return count;
+    }
+
+    calculateTubeFare(zonesTravelled: number, journey: Station[]): number {
+        return fares.MAX_FARE;
     }
 
 }
